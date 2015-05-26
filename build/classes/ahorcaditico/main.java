@@ -14,10 +14,8 @@ public class main {
     /**
      * @param args the command line arguments
      */
-    //add exception for repeated words
     public static void main(String[] args) {
         Ahorcaditico jugador = new Ahorcaditico();
-      //  Scanner in = new Scanner(System.in)
         String datos = jugador.leearch("palabras.txt");
         String[] palabras = jugador.dividePalabras(datos);
         boolean juegue = true;

@@ -14,9 +14,8 @@ import java.util.Random;
  * @author konrad
  */
 public class Ahorcaditico {
-
-    //Variables globales
-    boolean endgame = false;
+    
+boolean endgame = false;
     int chances = 6;
     int indice = 0;
     int posic = 0;
@@ -27,7 +26,8 @@ public class Ahorcaditico {
     int countF = 0;
     int countA = 0;
 
-    //Lee el archivo de texto que contiene todas las palabras
+
+    /*Lee el archivo de texto que contiene todas las palabras*/
     String leearch(String str) {
         File file = new File(str);
         str = "";
@@ -43,7 +43,7 @@ public class Ahorcaditico {
         return str;
     }
 
-    // Recibe los datos en un string y retorna un vector con las palabras
+    /* Recibe los datos en un string y retorna un vector con las palabras*/
     String[] dividePalabras(String data) {
         String[] words = data.split(",");
         return words;
@@ -64,7 +64,7 @@ public class Ahorcaditico {
 
     }
 
-    //Imprime los espacios
+    /*Imprime los espacios*/
     void spacer() {
         for (int j = 0; j < espacios.length; j++) {
             System.out.print(espacios[j] + " ");
@@ -72,7 +72,7 @@ public class Ahorcaditico {
         System.out.println("");
     }
 
-    //Imprime la figura
+    /*Imprime la figura*/
     void printFig(int fail) {
         String num = Integer.toString(fail);
         String str = "Ahorcado" + num + ".txt";
@@ -91,31 +91,31 @@ public class Ahorcaditico {
         System.out.println(str);
     }
 
-    //Reimprime el dibujo y las oportunidades restantes
+    /*Este metodo reimprime el dibujo y las oportunidades restantes*/
     void refresh(int num, boolean r, int pos) {
         System.out.println("\t\tOportunidades:" + chances);
         spacer();
         printFig(num);
     }
 
-    //Busca en el char[] una letra especifica y la sustituye en los espacios las veces que aparezca
-    //---> retorna true si el caracter ingresado esta en la palabra
+    /*Busca en el char[] una letra especifica y la sustituye en los espacios las veces que aparezca
+     ---> retorna true si el caracter ingresado esta en la palabra*/
     boolean xstLetra(char elec) {
         int cont = 0;
         for (int i = 0; i < curr.length; i++) {
             if (elec == curr[i]) {
-                espacios[i] = curr[i];
-                cont++;
+               espacios[i] = curr[i];
+               cont++;
             }
         }
         if (cont > 0) {
-            countA += cont - 1;
+            countA += cont-1;
             return true;
         }
         return false;
     }
 
-    //Analiza el caracter ingresado por el usuario
+    /*Analiza el caracter ingresado por el usuario*/
     boolean analice(char letra) {
         boolean s = true;
         if (xstLetra(letra) == true) {
@@ -147,7 +147,7 @@ public class Ahorcaditico {
         return s;
     }
 
-    //Este metodo toma el control para interactuar con el usuario
+    /*Este metodo toma el control para interactuar con el usuario*/
     void parser(String pal) {
         System.out.println("Bienvenido a Ahorcaditico\n");
         rellenador(pal);
@@ -161,9 +161,9 @@ public class Ahorcaditico {
             if (choice.equals(pal)) {
                 endgame = true;
                 System.out.println("Ya ganaste! -.-");
-                break;
+                           break;
             }
-
+          
             letra = choice.charAt(0);
             res = analice(letra);
             while (res == false) {
@@ -176,7 +176,6 @@ public class Ahorcaditico {
         }
     }
 
-    //Retorna true si el usuario gana
     boolean ganador(String palabr) {
         if (chances == 0) {
             System.out.println("Perdiste!");
@@ -189,7 +188,6 @@ public class Ahorcaditico {
         return false;
     }
 
-    //Sigue en el juego hasta que el usuario quiera dejar de jugar
     boolean playAgain() {
         System.out.println("Quieres jugar de nuevo?(si/no)");
         Scanner sc = new Scanner(System.in);
@@ -212,7 +210,6 @@ public class Ahorcaditico {
         return dele;
     }
 
-    //Reinicia todas las variables para una nueva partida
     void reinicieDatos() {
         endgame = false;
         chances = 6;
@@ -223,3 +220,4 @@ public class Ahorcaditico {
 
     }
 }
+
