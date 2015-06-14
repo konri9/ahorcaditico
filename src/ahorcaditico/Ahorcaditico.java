@@ -7,7 +7,7 @@ package ahorcaditico;
 
 import java.util.Scanner;
 import java.io.File;
-import java.util.Random;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -27,6 +27,8 @@ public class Ahorcaditico {
     int countF = 0;
     int countA = 0;
 
+  //  boolean analizex(String dat){
+   
     //Lee el archivo de texto que contiene todas las palabras
     String leearch(String str) {
         File file = new File(str);
@@ -160,7 +162,8 @@ public class Ahorcaditico {
             choice = sc.next();
             if (choice.equals(pal)) {
                 endgame = true;
-                System.out.println("Ya ganaste! -.-");
+                JOptionPane.showMessageDialog(null, "Ya Ganaste");
+                //System.out.println("Ya ganaste! -.-");
                 break;
             }
 
@@ -179,8 +182,10 @@ public class Ahorcaditico {
     //Retorna true si el usuario gana
     boolean ganador(String palabr) {
         if (chances == 0) {
-            System.out.println("Perdiste!");
-            System.out.println("La palabra era: " + palabr);
+            String mess = "Perdiste!\nLa palabra era: "+palabr;
+              JOptionPane.showMessageDialog(null, mess);
+//            System.out.println("Perdiste!");
+//            System.out.println("La palabra era: " + palabr);
             return true;
         } else if (countA == curr.length) {
             System.out.println("Ganaste!!");
@@ -191,11 +196,11 @@ public class Ahorcaditico {
 
     //Sigue en el juego hasta que el usuario quiera dejar de jugar
     boolean playAgain() {
-        System.out.println("Quieres jugar de nuevo?(si/no)");
-        Scanner sc = new Scanner(System.in);
+        
+       String el = JOptionPane.showInputDialog("Quieres jugar de nuevo?(si/no)");
+       // System.out.println("Quieres jugar de nuevo?(si/no)");
         boolean corr = false, dele = true;
         while (corr == false) {
-            String el = sc.next();
             switch (el) {
                 case "si":
                     corr = true;
