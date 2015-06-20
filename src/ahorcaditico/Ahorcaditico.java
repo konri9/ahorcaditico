@@ -14,7 +14,6 @@ import javax.swing.JOptionPane;
  * @author konrad
  */
 public class Ahorcaditico {
-
     //Variables globales
     boolean endgame = false;
     int chances = 6;
@@ -26,9 +25,26 @@ public class Ahorcaditico {
     char[] fallos;
     int countF = 0;
     int countA = 0;
+    String palabra;
 
-  //  boolean analizex(String dat){
-   
+    //Constructor ordinario -> genera una partida con base en las palabras ingresadas por el usuario
+    Ahorcaditico(){
+        String datos = JOptionPane.showInputDialog("Ingresa las letras separadas por comas");
+        String[] palabras = dividePalabras(datos);
+        palabra = palabras[(int) (Math.random() * (palabras.length - 0))];
+        parser();
+    }
+    
+    //Construye una nueva partida
+    Ahorcaditico(String Filename) {
+        String datos = leearch("palabras.txt");
+        //     datos = JOptionPane.showInputDialog("Ingresa las palabras separadas por comas");
+        //jugador.analizex();
+        String[] palabras = dividePalabras(datos);
+        palabra = palabras[(int) (Math.random() * (palabras.length - 0))];
+    }
+
+    
     //Lee el archivo de texto que contiene todas las palabras
     String leearch(String str) {
         File file = new File(str);
@@ -40,18 +56,23 @@ public class Ahorcaditico {
             }
             sc.close();
         } catch (Exception e) {
-            System.out.print("No se encontro el archivo de las palabras!");
+            JOptionPane.showMessageDialog(null, "No se encontraron las palabras", "Error", JOptionPane.ERROR_MESSAGE);
+            str = null;
+            return str;
+            //  System.out.print("No se encontro el archivo de las palabras!");
         }
         return str;
     }
 
+    
     // Recibe los datos en un string y retorna un vector con las palabras
     String[] dividePalabras(String data) {
         String[] words = data.split(",");
         return words;
     }
 
-    /*Rellena un array de caracteres con la palabra*/
+//  boolean analizex(String dat){
+/*Rellena un array de caracteres con la palabra*/
     void rellenador(String w) {
         curr = new char[w.length()];
         espacios = new char[curr.length];
@@ -63,7 +84,10 @@ public class Ahorcaditico {
         for (int i = 0; i < curr.length; i++) {
             espacios[i] = '_';
         }
+    }
 
+    String getWord() {
+        return palabra;
     }
 
     //Imprime los espacios
@@ -143,16 +167,16 @@ public class Ahorcaditico {
                 fallos[countF] = letra;
                 countF++;
                 chances--;
-
             }
         }
         return s;
     }
 
     //Este metodo toma el control para interactuar con el usuario
-    void parser(String pal) {
+    void parser() {
         System.out.println("Bienvenido a Ahorcaditico\n");
-        rellenador(pal);
+        rellenador(palabra);
+        getWord();
         boolean res = false;
         char letra = ' ';
         String choice = "";
@@ -160,7 +184,7 @@ public class Ahorcaditico {
         Scanner sc = new Scanner(System.in);
         while (endgame == false) {
             choice = sc.next();
-            if (choice.equals(pal)) {
+            if (choice.equals(palabra)) {
                 endgame = true;
                 JOptionPane.showMessageDialog(null, "Ya Ganaste");
                 //System.out.println("Ya ganaste! -.-");
@@ -175,15 +199,15 @@ public class Ahorcaditico {
                 res = analice(letra);
             }
             refresh(countF, res, posic);
-            endgame = ganador(pal);
+            endgame = ganador(palabra);
         }
     }
 
     //Retorna true si el usuario gana
     boolean ganador(String palabr) {
         if (chances == 0) {
-            String mess = "Perdiste!\nLa palabra era: "+palabr;
-              JOptionPane.showMessageDialog(null, mess);
+            String mess = "Perdiste!\nLa palabra era: " + palabr;
+            JOptionPane.showMessageDialog(null, mess);
 //            System.out.println("Perdiste!");
 //            System.out.println("La palabra era: " + palabr);
             return true;
@@ -196,9 +220,8 @@ public class Ahorcaditico {
 
     //Sigue en el juego hasta que el usuario quiera dejar de jugar
     boolean playAgain() {
-        
-       String el = JOptionPane.showInputDialog("Quieres jugar de nuevo?(si/no)");
-       // System.out.println("Quieres jugar de nuevo?(si/no)");
+        String el = JOptionPane.showInputDialog("Quieres jugar de nuevo?(si/no)");
+        // System.out.println("Quieres jugar de nuevo?(si/no)");
         boolean corr = false, dele = true;
         while (corr == false) {
             switch (el) {
