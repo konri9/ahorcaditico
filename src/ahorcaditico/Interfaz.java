@@ -15,6 +15,8 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author konrad
@@ -23,50 +25,82 @@ import java.awt.Font;
 // Pantalla de Inicio
 public class Interfaz extends JFrame {
 
-    private final JLabel label1; // JLabel with just text
-    private final JLabel label2; // JLabel constructed with text and icon  
-    private final JLabel label3; // JLabel with added text and icon
+    JLabel oportunidades, espacios, hangman;    
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private JTextField textField1; // text field with set size
     private JTextField textField2; // text field constructed with text
-    //Construye la interfaz con los elementos esenciales
+    String chanx, spa;
+    boolean another;
+    Ahorcaditico ah;
+
     public Interfaz() {
         super("Ahorcaditico");
         setLayout(new FlowLayout()); // set frame layout
-         
-        //Icon flag = new ImageIcon(getClass().getResource("flag.png"));
-        label1 = new JLabel("Hola");
-        label1.setToolTipText("Cantidad de vidas restantes");
-        
-        add(label1); // add label1 to JFrame
-        
-// JLabel constructor with string, Icon and alignment arguments
-        int num = 0;
-        //String hmn = "Ahorcado" + num + ".txt";
-        String hmn = "hangman1.png";
-        Icon bug = new ImageIcon(getClass().getResource(hmn));
-        label2 = new JLabel("Label with text and icon", bug, SwingConstants.LEFT);
-        label2.setFont(new Font("Serif", Font.PLAIN, 24));
-        label2.setToolTipText("This is label2");
-        add(label2); // add label2 to JFrame
+        ah = new Ahorcaditico();
+        ah.newGame();
+        chanx = "Te quedan " + Integer.toString(ah.chances) +" chances";
+     //   another = ah.keepit;
+        oportunidades = new JLabel(chanx);
+        oportunidades.setHorizontalTextPosition(SwingConstants.LEFT);
+        oportunidades.setVerticalTextPosition(SwingConstants.BOTTOM);
+        oportunidades.setToolTipText("Cantidad de vidas restantes");
+        add(oportunidades);
        
-        label3 = new JLabel(); // JLabel constructor no arguments
-
-        label3.setText("Label with icon and text at bottom");
-        label3.setIcon(bug); // add icon to JLabel
-
-        label3.setHorizontalTextPosition(SwingConstants.CENTER);
-
-        label3.setVerticalTextPosition(SwingConstants.BOTTOM);
-
-        label3.setToolTipText("This is label3");
-        add(label3); // add label3 to JFrame
-       
+        espacios = new JLabel(ah.spaces);//, SwingConstants.LEFT);
+        espacios.setFont(new Font("Serif", Font.PLAIN, 54));
+        espacios.setHorizontalTextPosition(SwingConstants.CENTER);
+        espacios.setVerticalTextPosition(SwingConstants.BOTTOM);
+        espacios.setToolTipText("Espacios restantes por adivinar");
+        add(espacios); // add label2 to JFrame
+        
+        Icon hng = new ImageIcon(getClass().getResource(ah.draw));
+        hangman = new JLabel(hng);
+        add(hangman);
+        
+    }
+  
+     //Este metodo toma el control para interactuar con el usuario
+    void parser() {
+        rebuild();
+        boolean endit = false;
+        String choice;
+        while (!endit) {
+            choice = JOptionPane.showInputDialog("Adivina la plalabra");
+            if (choice.equals(ah.palabra)) {
+                ah.rellenela();
+                rebuild();
+                JOptionPane.showMessageDialog(null, "Ya Ganaste -.-");
+                break;
+            }
+            char letra = choice.charAt(0);
+            ah.analice(letra);
+          //  choice = JOptionPane.showInputDialog("Sigue intentando");
+           // letra = choice.charAt(0);
+            //seg = ah.analice(letra);
+            ah.refresh();
+            rebuild();
+            endit = ah.finish();
+        }
+        
+        if(ah.playAgain()){
+            ah.newGame();
+            parser();
+        }
     }
     
-    
-    
-    
-    
+    void rebuild(){
+         chanx = "Te quedan " + Integer.toString(ah.chances) +" chances";
+         oportunidades.setText(chanx);
+         spa = ah.spaces;
+         System.out.println("Los espacios son "+spa);
+         espacios.setText(spa);
+         //espacios.setIcon(new ImageIcon(getClass().getResource(ah.draw)));
+        System.out.println(ah.draw);
+        hangman.setIcon(new ImageIcon(getClass().getResource(ah.draw)));
+        
+      
+    }
+
 }
+

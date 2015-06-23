@@ -14,240 +14,158 @@ import javax.swing.JOptionPane;
  * @author konrad
  */
 public class Ahorcaditico {
+
     //Variables globales
-    boolean endgame = false;
-    int chances = 6;
-    int indice = 0;
-    int posic = 0;
-    char[] curr;
-    char[] espacios;
-    char[] aciertos;
-    char[] fallos;
-    int countF = 0;
-    int countA = 0;
-    String palabra;
+    boolean keepit = false;
+    int chances = 6, indice = 0, posic = 0;
+    char[] word, espacios, aciertos, fallos;
+    int countF = 0, countA = 0, corrA;
+    String palabra = "", spaces = "", draw;
+    String[] palabras, usadas;
 
     //Constructor ordinario -> genera una partida con base en las palabras ingresadas por el usuario
-    Ahorcaditico(){
+    Ahorcaditico() {
         String datos = JOptionPane.showInputDialog("Ingresa las letras separadas por comas");
-        String[] palabras = dividePalabras(datos);
+        palabras = datos.split(",");
+    }
+
+    void newGame() {
         palabra = palabras[(int) (Math.random() * (palabras.length - 0))];
-        parser();
-    }
-    
-    //Construye una nueva partida
-    Ahorcaditico(String Filename) {
-        String datos = leearch("palabras.txt");
-        //     datos = JOptionPane.showInputDialog("Ingresa las palabras separadas por comas");
-        //jugador.analizex();
-        String[] palabras = dividePalabras(datos);
-        palabra = palabras[(int) (Math.random() * (palabras.length - 0))];
-    }
-
-    
-    //Lee el archivo de texto que contiene todas las palabras
-    String leearch(String str) {
-        File file = new File(str);
-        str = "";
-        try {
-            Scanner sc = new Scanner(file);
-            while (sc.hasNextLine()) {
-                str += sc.nextLine();
-            }
-            sc.close();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "No se encontraron las palabras", "Error", JOptionPane.ERROR_MESSAGE);
-            str = null;
-            return str;
-            //  System.out.print("No se encontro el archivo de las palabras!");
+        reinicieDatos();
+        for (int i = 0; i < palabra.length(); i++) {
+            word[i] = palabra.charAt(i);
         }
-        return str;
-    }
-
-    
-    // Recibe los datos en un string y retorna un vector con las palabras
-    String[] dividePalabras(String data) {
-        String[] words = data.split(",");
-        return words;
-    }
-
-//  boolean analizex(String dat){
-/*Rellena un array de caracteres con la palabra*/
-    void rellenador(String w) {
-        curr = new char[w.length()];
-        espacios = new char[curr.length];
-        aciertos = new char[curr.length];
-        fallos = new char[chances];
-        for (int i = 0; i < w.length(); i++) {
-            curr[i] = w.charAt(i);
-        }
-        for (int i = 0; i < curr.length; i++) {
+        for (int i = 0; i < word.length; i++) {
             espacios[i] = '_';
         }
+        spacer();
+        draw();
+        // parser();
     }
 
-    String getWord() {
-        return palabra;
-    }
-
-    //Imprime los espacios
-    void spacer() {
-        for (int j = 0; j < espacios.length; j++) {
-            System.out.print(espacios[j] + " ");
+    // Recibe un vector y un caracter
+    // Retorna true si el caracter se encuentra en el vector
+    boolean yala(char[] e, char l) {
+        for (int i = 0; i < e.length; i++) {
+            if (e[i] == l) {
+                return true;
+            }
         }
-        System.out.println("");
+        return false;
     }
+    
+    boolean usadas(String w, String[] u){
+        
+        return false;
+    }
+    
 
     //Imprime la figura
-    void printFig(int fail) {
-        String num = Integer.toString(fail);
-        String str = "Ahorcado" + num + ".txt";
-        File file = new File(str);
-        str = "";
-        try {
-            Scanner sc = new Scanner(file);
-            while (sc.hasNextLine()) {
-                str += sc.nextLine();
-                str += "\n";
-            }
-            sc.close();
-        } catch (Exception e) {
-            System.out.print("No se encontro el archivo");
-        }
-        System.out.println(str);
+    void draw() {
+        String num = Integer.toString(countF);
+        draw = "hangman" + num + ".png";
+       // System.out.println(draw);
     }
 
     //Reimprime el dibujo y las oportunidades restantes
-    void refresh(int num, boolean r, int pos) {
-        System.out.println("\t\tOportunidades:" + chances);
+    void refresh() {
         spacer();
-        printFig(num);
+        draw();
+    }
+
+    //Llena un string con los espacios correspondientes
+    void spacer() {
+        spaces = "";
+        for (int i = 0; i < espacios.length; i++) {
+            spaces += espacios[i] + " ";
+        }
     }
 
     //Busca en el char[] una letra especifica y la sustituye en los espacios las veces que aparezca
-    //---> retorna true si el caracter ingresado esta en la palabra
+    //retorna true si el caracter ingresado esta en la palabra
     boolean xstLetra(char elec) {
         int cont = 0;
-        for (int i = 0; i < curr.length; i++) {
-            if (elec == curr[i]) {
-                espacios[i] = curr[i];
+        for (int i = 0; i < word.length; i++) {
+            if (elec == word[i]) {
+                espacios[i] = word[i];
                 cont++;
             }
         }
-        if (cont > 0) {
-            countA += cont - 1;
+        if (cont > 0){
+            if(!yala(aciertos,elec)) corrA += cont;
             return true;
         }
         return false;
     }
 
     //Analiza el caracter ingresado por el usuario
-    boolean analice(char letra) {
-        boolean s = true;
-        if (xstLetra(letra) == true) {
-
-            for (int i = 0; i < aciertos.length; i++) {
-                if (aciertos[i] == letra) {
-                    System.out.println("Ya intentaste esa letra, prueba otra");
-                    s = false;
-                }
-            }
-            if (s == true) {
+    //retorna true si el acierta, false caso contrario
+    void analice(char letra) {
+        boolean esta = false;
+        if (xstLetra(letra)) {
+            esta = yala(aciertos, letra);
+            if (esta) {
+                JOptionPane.showMessageDialog(null, "Error", "Ya acertaste esa letra!", JOptionPane.ERROR_MESSAGE);
+            } else if (!esta) {
                 aciertos[countA] = letra;
                 countA++;
             }
-        } else if (xstLetra(letra) == false) {
-            for (int i = 0; i < fallos.length; i++) {
-                if (fallos[i] == letra) {
-                    System.out.println("Ya intentaste esa letra, prueba otra");
-                    s = false;
-                }
-            }
-            if (s == true) {
+        } else if (!xstLetra(letra)) {
+            esta = yala(fallos, letra);
+            if (esta) {
+                JOptionPane.showMessageDialog(null, "Error", "Ya intentaste esa letra!", JOptionPane.ERROR_MESSAGE);
+            } else if (!esta) {
                 fallos[countF] = letra;
                 countF++;
                 chances--;
             }
         }
-        return s;
     }
 
-    //Este metodo toma el control para interactuar con el usuario
-    void parser() {
-        System.out.println("Bienvenido a Ahorcaditico\n");
-        rellenador(palabra);
-        getWord();
-        boolean res = false;
-        char letra = ' ';
-        String choice = "";
-        refresh(countF, res, posic);
-        Scanner sc = new Scanner(System.in);
-        while (endgame == false) {
-            choice = sc.next();
-            if (choice.equals(palabra)) {
-                endgame = true;
-                JOptionPane.showMessageDialog(null, "Ya Ganaste");
-                //System.out.println("Ya ganaste! -.-");
-                break;
-            }
-
-            letra = choice.charAt(0);
-            res = analice(letra);
-            while (res == false) {
-                choice = sc.next();
-                letra = choice.charAt(0);
-                res = analice(letra);
-            }
-            refresh(countF, res, posic);
-            endgame = ganador(palabra);
+    void rellenela() {
+        for (int i = 0; i < word.length; i++) {
+            espacios[i] = word[i];
         }
     }
 
-    //Retorna true si el usuario gana
-    boolean ganador(String palabr) {
+    //Retorna true si el usuario gana, false en caso contrario
+    boolean finish() {
         if (chances == 0) {
-            String mess = "Perdiste!\nLa palabra era: " + palabr;
-            JOptionPane.showMessageDialog(null, mess);
-//            System.out.println("Perdiste!");
-//            System.out.println("La palabra era: " + palabr);
+            JOptionPane.showMessageDialog(null, "Perdiste!\nLa palabra era: " + palabra);
             return true;
-        } else if (countA == curr.length) {
-            System.out.println("Ganaste!!");
+        } else if (corrA == word.length) {
+            JOptionPane.showMessageDialog(null, "Ganaste", "Ganaste!!", JOptionPane.INFORMATION_MESSAGE);
             return true;
         }
         return false;
     }
 
-    //Sigue en el juego hasta que el usuario quiera dejar de jugar
+    //Ve si el usuario quiere jugar de nuevo
     boolean playAgain() {
         String el = JOptionPane.showInputDialog("Quieres jugar de nuevo?(si/no)");
-        // System.out.println("Quieres jugar de nuevo?(si/no)");
-        boolean corr = false, dele = true;
-        while (corr == false) {
-            switch (el) {
-                case "si":
-                    corr = true;
-                    break;
-                case "no":
-                    dele = false;
-                    corr = true;
-                    break;
-                default:
-                    System.out.println("Ingresa una opcion valida");
-                    break;
-            }
+        if (el.equals("si")) {
+            newGame();
+            return true;
         }
-        return dele;
+        if (el.equals("no")) {
+            return false;
+        } else {
+            JOptionPane.showMessageDialog(null, "Advertencia", "Ingresa una opcion valida", JOptionPane.WARNING_MESSAGE);
+            playAgain();
+        }
+        return false;
     }
 
-    //Reinicia todas las variables para una nueva partida
+//Reinicia todas las variables para una nueva partida
     void reinicieDatos() {
-        endgame = false;
         chances = 6;
-        indice = 0;
         posic = 0;
         countF = 0;
         countA = 0;
-
+        corrA = 0;
+        word = new char[palabra.length()];
+        espacios = new char[palabra.length()];
+        aciertos = new char[palabra.length()];
+        fallos = new char[chances];
     }
 }
