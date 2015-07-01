@@ -19,16 +19,25 @@ public class Ahorcaditico {
     boolean keepit = false;
     int chances = 6, indice = 0, posic = 0;
     char[] word, espacios, aciertos, fallos;
-    int countF = 0, countA = 0, corrA;
+    int countF = 0, countA = 0, corrA, glob=0;
     String palabra = "", spaces = "", draw;
     String[] palabras, usadas;
 
     //Constructor ordinario -> genera una partida con base en las palabras ingresadas por el usuario
     Ahorcaditico() {
         String datos = JOptionPane.showInputDialog("Ingresa las letras separadas por comas");
-        palabras = datos.split(",");
+         palabras = datos.split(",");
     }
 
+    String elige_palabra (String w, String[] mae){
+       
+        if(!yasalio(palabra, palabras)){
+            palabra = w;
+        }
+        return w;    
+    }
+    
+    
     void newGame() {
         palabra = palabras[(int) (Math.random() * (palabras.length - 0))];
         reinicieDatos();
@@ -40,10 +49,8 @@ public class Ahorcaditico {
         }
         spacer();
         draw();
-        // parser();
     }
 
-    // Recibe un vector y un caracter
     // Retorna true si el caracter se encuentra en el vector
     boolean yala(char[] e, char l) {
         for (int i = 0; i < e.length; i++) {
@@ -54,9 +61,12 @@ public class Ahorcaditico {
         return false;
     }
     
-    boolean usadas(String w, String[] u){
-        
-        return false;
+    //Retorna true si la palabra ya se utilizo 
+    boolean yasalio(String w, String[] u){
+        for(int i=0;i<palabras.length;i++){
+            if(u[i] == w) return false; 
+        }
+        return true;
     }
     
 
@@ -64,7 +74,6 @@ public class Ahorcaditico {
     void draw() {
         String num = Integer.toString(countF);
         draw = "hangman" + num + ".png";
-       // System.out.println(draw);
     }
 
     //Reimprime el dibujo y las oportunidades restantes
@@ -122,6 +131,8 @@ public class Ahorcaditico {
         }
     }
 
+    
+    //Rellena el vector de espacios con base en la palabra
     void rellenela() {
         for (int i = 0; i < word.length; i++) {
             espacios[i] = word[i];
@@ -167,5 +178,6 @@ public class Ahorcaditico {
         espacios = new char[palabra.length()];
         aciertos = new char[palabra.length()];
         fallos = new char[chances];
+        usadas = new String[palabras.length];
     }
 }

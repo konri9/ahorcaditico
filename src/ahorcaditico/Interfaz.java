@@ -42,13 +42,14 @@ public class Interfaz extends JFrame {
         chanx = "Te quedan " + Integer.toString(ah.chances) +" chances";
      //   another = ah.keepit;
         oportunidades = new JLabel(chanx);
+        oportunidades.setFont(new Font("Serif", Font.PLAIN,20));
         oportunidades.setHorizontalTextPosition(SwingConstants.LEFT);
         oportunidades.setVerticalTextPosition(SwingConstants.BOTTOM);
         oportunidades.setToolTipText("Cantidad de vidas restantes");
         add(oportunidades);
        
         espacios = new JLabel(ah.spaces);//, SwingConstants.LEFT);
-        espacios.setFont(new Font("Serif", Font.PLAIN, 54));
+        espacios.setFont(new Font("Serif", Font.PLAIN, 44));
         espacios.setHorizontalTextPosition(SwingConstants.CENTER);
         espacios.setVerticalTextPosition(SwingConstants.BOTTOM);
         espacios.setToolTipText("Espacios restantes por adivinar");
@@ -67,6 +68,7 @@ public class Interfaz extends JFrame {
         String choice;
         while (!endit) {
             choice = JOptionPane.showInputDialog("Adivina la plalabra");
+            if(choice == null) choice = JOptionPane.showInputDialog("Ingresa un caracter");
             if (choice.equals(ah.palabra)) {
                 ah.rellenela();
                 rebuild();
@@ -96,8 +98,8 @@ public class Interfaz extends JFrame {
          System.out.println("Los espacios son "+spa);
          espacios.setText(spa);
          //espacios.setIcon(new ImageIcon(getClass().getResource(ah.draw)));
-        System.out.println(ah.draw);
-        hangman.setIcon(new ImageIcon(getClass().getResource(ah.draw)));
+         System.out.println(ah.draw);
+         hangman.setIcon(new ImageIcon(getClass().getResource(ah.draw)));
         
       
     }
